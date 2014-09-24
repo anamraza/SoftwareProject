@@ -1,5 +1,5 @@
 SoftwareProject
 ===============
 
-Fork this repo.
+Fork this repo. Develop branch will be for testing
 
