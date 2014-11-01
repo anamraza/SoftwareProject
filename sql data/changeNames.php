@@ -1,7 +1,7 @@
 <?php
 
 include("connect.php");
-require_once __DIR__.'/Faker/src/autoload.php';
+require_once __DIR__.'/Faker-master/Faker-master/src/autoload.php';
 
 // use to get real random name to make sample data look better
 // theres an error when updating many rows
@@ -9,32 +9,37 @@ require_once __DIR__.'/Faker/src/autoload.php';
 $faker = Faker\Factory::create();
 //return a number of all the unique names in the table
 
-//SELECT DISTINCT studentNumber from studentStats LIMIT 715, 1000
-$result = mysql_query("SELECT DISTINCT studentNumber from studentStats");
+//SELECT DISTINCT student_no from student LIMIT 715, 1000
+$result = mysqli_query($db, "SELECT DISTINCT student_no from student");
 
 
 
-while ($row = mysql_fetch_array($result)) {
-	$studentNum = $row['studentNumber'];
+while ($row = mysqli_fetch_array($result)) {
+	$studentNum = $row['student_no'];
 
 	$firstN = $faker->firstName;
 	$lastN = $faker->lastName;
-	$sql = "UPDATE studentStats
-		SET studentName='$firstN $lastN', 
-		firstName=' $firstN', 
-		lastName='$lastN'
-		WHERE studentNumber = $studentNum";
+	
+	$firstN = mysqli_real_escape_string($db, $firstN);
+	$lastN = mysqli_real_escape_string($db, $lastN);
+	$sql = "UPDATE student
+		SET student_name='$firstN $lastN', 
+		student_first_name=' $firstN', 
+		student_last_name='$lastN'
+		WHERE student_no = $studentNum";
+	
+	
 
-	$retval = mysql_query($sql);
+	$retval = mysqli_query($db, $sql);
 	//echo $firstN ."</br>";
 	if(! $retval )
 	{
-	  die('Could not update data: ' . mysql_error().' '. $studentNum);
+	  die('Could not update data: ' . mysqli_error($db).' '. $studentNum);
 	}
 
 }
 
 echo "done";
 
-mysql_close($db);
+mysqli_close($db);
 ?>
