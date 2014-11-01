@@ -1,17 +1,43 @@
 <?php
-$dbhost = 'localhost';
-$dbname = 'mydb';
-$username = 'root';
-$pass = '';
+include("connect.php");
 
-$db = mysqli_connect ( $dbhost, $username, $pass ) or die ( '<div align="center">Warning: Could not connect to the database</div>' );
-if (! $db) {
-	printf ( "Error: %s\n", mysqli_error ( $db ) );
-	exit ();
+
+if (empty($_FILES["uploadFile"]["name"])) {
+	echo "Please select a file.";
 }
 
-$cid = mysqli_select_db ( $db, $dbname );
-// supply your database name
+else {
+/*upload file code starts */
+$target_dir = "upload/";
+$target_dir = $target_dir . basename( $_FILES["uploadFile"]["name"]);
+$uploadOk=1;
+
+// Only CSV files allowed
+
+$mimes = array('application/vnd.ms-excel','text/plain','text/csv','text/tsv');
+if(!in_array($_FILES['uploadFile']['type'],$mimes)){
+	echo "Sorry, only csv files are allowed.";
+	$uploadOk = 0;
+
+}
+
+
+
+// Check if $uploadOk is set to 0 by an error
+if ($uploadOk == 0) {
+	echo "Sorry, your file was not uploaded.";
+	// if everything is ok, try to upload file
+} else {
+	if (move_uploaded_file($_FILES["uploadFile"]["tmp_name"], $target_dir)) {
+		echo "The file ". basename( $_FILES["uploadFile"]["name"]). " has been uploaded.";
+	} else {
+		echo "Sorry, there was an error uploading your file.";
+	}
+}
+/*upload file code ends */
+
+
+/*insert data code starts */
 
 define ( 'CSV_PATH', 'C:/wamp/www/SoftwareProjectV1/' );
 
@@ -19,14 +45,23 @@ define ( 'CSV_PATH', 'C:/wamp/www/SoftwareProjectV1/' );
 
 $csv_file = CSV_PATH . "clientdataComplete.csv"; // Name of your CSV file
 
-insertStudentTable();
-insertCourseTable();
-insertCourseSectionTable();
-insertStudentEnrollmentTable();
+echo "lkjkl";
+
+
+
+
+//insertCourseSectionTable();
+
 insertDeptTable(); 
-insertProgramtable();
+insertProgramTable();
+insertCourseTable();
+insertStudentTable();
+
+insertStudentEnrollmentTable();
+
 insertProgramCourseTable();
 
+}
 function insertStudentTable() {
 
 global $db;
@@ -54,6 +89,13 @@ while ( ! feof ( $csvfile ) ) {
 	
 	$insert_csv ['student_first_name'] = isset ( $csv_array [10] ) ? $csv_array [10] : null;
 	
+	$insert_csv ['program_no'] = isset ( $csv_array [2] ) ? $csv_array [2] : null;
+	
+	//need to change the array number - just for testing purpose
+	$insert_csv ['program_version'] = isset ( $csv_array [4] ) ? $csv_array [4] : null;
+	
+	$insert_csv ['department_no'] = isset ( $csv_array [1] ) ? $csv_array [1] : null;
+	
 	$query1 = "select * from student where student_no = '" . $insert_csv ['student_no'] . "'";
 	$result = mysqli_query ( $db, $query1 );
 	
@@ -61,14 +103,25 @@ while ( ! feof ( $csvfile ) ) {
 		echo "update";
 		//mysqli_query($db,"UPDATE student SET Age=36 WHERE FirstName='Peter' AND LastName='Griffin'");
 		mysqli_query($db,"UPDATE student SET 
+				student_name = '" . $insert_csv ['student_first_name'] . "' '" . $insert_csv ['student_last_name'] . "',
 				student_last_name = '" . $insert_csv ['student_last_name'] . "',
-				student_first_name = '" . $insert_csv ['student_first_name'] . "'
-						where student_no = '" . $insert_csv ['student_no'] . "'");
+				student_first_name = '" . $insert_csv ['student_first_name'] . "',
+				program_no = '" . $insert_csv ['program_no'] . "', 
+				program_version = '" . $insert_csv ['program_version'] . "',
+				department_no = '" . $insert_csv ['department_no'] . "'
+				where student_no = '" . $insert_csv ['student_no'] . "'");
 	}
 	else {
 		echo "insert";
-		$query2 = "INSERT INTO student(student_no,student_first_name,student_last_name) 
-				VALUES('" . $insert_csv ['student_no'] . "','" . $insert_csv ['student_first_name'] . "','" . $insert_csv ['student_last_name'] . "')";	
+		$query2 = "INSERT INTO student(student_no,student_name,student_first_name,student_last_name,program_no,program_version,
+				department_no) 
+				VALUES('" . $insert_csv ['student_no'] . "',
+				'" . $insert_csv ['student_first_name'] . "' '" . $insert_csv ['student_last_name'] . "',
+				'" . $insert_csv ['student_first_name'] . "',
+				'" . $insert_csv ['student_last_name'] . "',
+				'" . $insert_csv ['program_no'] . "', 
+				'" . $insert_csv ['program_version'] . "',
+				'" . $insert_csv ['department_no'] . "')";	
 
 	
 		$insert = mysqli_query ( $db, $query2 );
@@ -116,26 +169,22 @@ function insertCourseTable() {
 
 		$insert_csv ['course_no'] = isset ( $csv_array [12] ) ? $csv_array [12] : null;
 		
-		$insert_csv ['level'] = isset ( $csv_array [11] ) ? $csv_array [11] : null;
 
 		$insert_csv ['course_name'] = isset ( $csv_array [13] ) ? $csv_array [13] : null;
 
-		$query1 = "select * from course where course_no = '" . $insert_csv ['course_no'] . "'
-		and level = '" . $insert_csv ['level'] . "'";
+		$query1 = "select * from course where course_no = '" . $insert_csv ['course_no'] . "'";
 		$result = mysqli_query ( $db, $query1 );
 
 		if (mysqli_fetch_array($result) == true) {
 			echo "update";
 			mysqli_query($db,"UPDATE course SET
 				course_name = '" . $insert_csv ['course_name'] . "'
-						where course_no = '" . $insert_csv ['course_no'] . "'
-						and level = '" . $insert_csv ['level'] . "'");
+						where course_no = '" . $insert_csv ['course_no'] . "'");
 		}
 		else {
 			echo "insert";
-			$query2 = "INSERT INTO course(course_no,course_name,level)
-				VALUES('" . $insert_csv ['course_no'] . "','" . $insert_csv ['course_name'] . "',
-						'" . $insert_csv ['level'] . "')";
+			$query2 = "INSERT INTO course(course_no,course_name)
+				VALUES('" . $insert_csv ['course_no'] . "','" . $insert_csv ['course_name'] . "')";
 			$insert = mysqli_query ( $db, $query2 );
 
 		}
@@ -245,14 +294,22 @@ function insertStudentEnrollmentTable() {
 		
 		$insert_csv ['term'] = isset ( $csv_array [0] ) ? $csv_array [0] : null;
 		
-		$insert_csv ['level'] = isset ( $csv_array [11] ) ? $csv_array [11] : null;
+		//$insert_csv ['level'] = isset ( $csv_array [11] ) ? $csv_array [11] : null;
+		
+		$insert_csv ['program_no'] = isset ( $csv_array [2] ) ? $csv_array [2] : null;
+		
+		//need to change the array number - just for testing purpose
+		$insert_csv ['program_version'] = isset ( $csv_array [4] ) ? $csv_array [4] : null;
+		
+		$insert_csv ['department_no'] = isset ( $csv_array [1] ) ? $csv_array [1] : null;
 
 		$query1 = "select * from student_enrollment where
-				section_no = '" . $insert_csv ['section_no'] . "'
-				and course_no = '" . $insert_csv ['course_no'] . "'
+				course_no = '" . $insert_csv ['course_no'] . "'
 				and student_no = '" . $insert_csv ['student_no'] . "'
 				and term = '" . $insert_csv ['term'] . "'
-				and level = '" . $insert_csv ['level'] . "'";
+				and program_no = '" . $insert_csv ['program_no'] . "'
+				and program_version = '" . $insert_csv ['program_version'] . "' 
+				and department_no = '" . $insert_csv ['department_no'] . "'";
 
 		$result = mysqli_query ( $db, $query1 );
 
@@ -263,16 +320,20 @@ function insertStudentEnrollmentTable() {
 				status = '" . $insert_csv ['status'] . "'
 				where student_no = '" . $insert_csv ['student_no'] . "'
 				and course_no = '" . $insert_csv ['course_no'] . " '
-				and section_no = '" . $insert_csv ['section_no'] . "'
 				and term = '" . $insert_csv ['term'] . "'
-				and level = '" . $insert_csv ['level'] . "'");
+				and program_no = '" . $insert_csv ['program_no'] . "'
+				and program_version = '" . $insert_csv ['program_version'] . "' 
+				and department_no = '" . $insert_csv ['department_no'] . "'");
+						
 		}
 		else {
 			echo "insert";
-			$query2 = "INSERT INTO student_enrollment(level,section_no,course_no, student_no, grade, status,term)
-				VALUES('" . $insert_csv ['level'] . "', '" . $insert_csv ['section_no'] . "','" . $insert_csv ['course_no'] . "',
-				'" . $insert_csv ['student_no'] . "', '" . $insert_csv ['grade'] . "', 
-				'" . $insert_csv ['status'] . "', '" . $insert_csv ['term'] . "')";
+			$query2 = "INSERT INTO student_enrollment(term,student_no, program_no,program_version,department_no,course_no,grade,status)
+				VALUES('" . $insert_csv ['term'] . "', '" . $insert_csv ['student_no'] . "','" . $insert_csv ['program_no'] . "',
+				'" . $insert_csv ['program_version'] . "', '" . $insert_csv ['department_no'] . "', 
+				'" . $insert_csv ['course_no'] . "',
+				'" . $insert_csv ['grade'] . "',
+				 '" . $insert_csv ['status'] . "')";
 			$insert = mysqli_query ( $db, $query2 );
 
 		}
@@ -367,6 +428,8 @@ function insertProgramTable() {
 		$insert_csv ['department_no'] = isset ( $csv_array [1] ) ? $csv_array [1] : null;
 
 		$insert_csv ['program_name'] = isset ( $csv_array [3] ) ? $csv_array [3] : null;
+		
+		$insert_csv ['a_level'] = isset ( $csv_array [11] ) ? $csv_array [11] : null;
 
 
 
@@ -380,16 +443,18 @@ function insertProgramTable() {
 		if (mysqli_fetch_array($result) == true) {
 			echo "update";
 			mysqli_query($db,"UPDATE program SET
-				program_name = '" . $insert_csv ['program_name'] . "'
+				program_name = '" . $insert_csv ['program_name'] . "',
+				a_level = '" . $insert_csv ['a_level'] . "'
 				where program_no = '" . $insert_csv ['program_no'] . "'
 				and department_no = '" . $insert_csv ['department_no'] . " '
 				and program_version = '" . $insert_csv ['program_version'] . "'");
 		}
 		else {
 			echo "insert";
-			$query2 = "INSERT INTO program(program_no,program_version,department_no,program_name)
+			$query2 = "INSERT INTO program(program_no,program_version,department_no,program_name,a_level)
 				VALUES('" . $insert_csv ['program_no'] . "','" . $insert_csv ['program_version'] . "',
-				'" . $insert_csv ['department_no'] . "', '" . $insert_csv ['program_name'] . "')";
+				'" . $insert_csv ['department_no'] . "', '" . $insert_csv ['program_name'] . "',
+				'" . $insert_csv ['a_level'] . "')";
 			$insert = mysqli_query ( $db, $query2 );
 
 		}
@@ -433,8 +498,6 @@ function insertProgramCourseTable() {
 		$insert_csv ['department_no'] = isset ( $csv_array [1] ) ? $csv_array [1] : null;
 
 		$insert_csv ['course_no'] = isset ( $csv_array [12] ) ? $csv_array [12] : null;
-		
-		$insert_csv ['level'] = isset ( $csv_array [11] ) ? $csv_array [11] : null;
 
 
 
@@ -442,8 +505,8 @@ function insertProgramCourseTable() {
 				program_no = '" . $insert_csv ['program_no'] . "'
 				and program_version = '" . $insert_csv ['program_version'] . "'
 				and department_no = '" . $insert_csv ['department_no'] . "'
-				and course_no = '" .$insert_csv['course_no'] . "'
-				and level = '" .$insert_csv['level'] . "'";
+				and course_no = '" .$insert_csv['course_no'] . "'";
+				
 
 		$result = mysqli_query ( $db, $query1 );
 
@@ -457,10 +520,9 @@ function insertProgramCourseTable() {
 		}
 		else {
 			echo "insert";
-			$query2 = "INSERT INTO program_course(program_no,program_version,department_no,course_no,level)
+			$query2 = "INSERT INTO program_course(program_no,program_version,department_no,course_no)
 				VALUES('" . $insert_csv ['program_no'] . "','" . $insert_csv ['program_version'] . "',
-				'" . $insert_csv ['department_no'] . "', '" . $insert_csv ['course_no'] . "',
-				'" . $insert_csv ['level'] . "')";
+				'" . $insert_csv ['department_no'] . "', '" . $insert_csv ['course_no'] . "')";
 			$insert = mysqli_query ( $db, $query2 );
 
 		}
