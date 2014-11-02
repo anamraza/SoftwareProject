@@ -1,3 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- <link rel="stylesheet" href="https://s3.amazonaws.com/codecademy-content/courses/ltp/css/bootstrap.css"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://rawgit.com/wenzhixin/bootstrap-table/master/dist/bootstrap-table.min.css">
+<style>
+
+    .content{
+        background-color: #eee;
+        /*margin-top: -10px;*/
+        border-radius: 5px;
+    }
+
+    .content #grades{
+        font-size: 14px;
+        color: #00b0ff;
+    }
+
+    .content h1{
+        font-size: 16px;
+        padding-bottom:5px;
+        margin-left: -10px;
+        text-transform:uppercase;
+    }
+
+    .nav #title{
+        /*font-size: 16px;*/
+    }
+
+    #allCourses{
+        margin-bottom: -15px;
+    }
+
+    .navbar{
+        border-radius: 0px;
+        background-color: #E6E6E6;
+        color: #5a5a5a;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform:uppercase;
+        /*margin-bottom: 0px;*/
+    }
+
+    .navbar form{
+        padding-top: 10px;
+    }
+    .navbar #title{
+        font-size: 12px;
+    }
+
+
+    .active1 {
+        background-color: #ddd;
+    }
+   /* .panel-heading{
+        background-color: #ddd;
+        color: #00b0ff;
+    }
+*/
+
+    #students{
+        margin-left: 10px;
+    }
+    </style>
+</head>
+
+<body>
+
+<div class="nav">
+    <div class="container">
+
+    
+    <!-- http://getbootstrap.com/components/#navbar-component-alignment -->
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav pull-left">
+                <li id="title"><a href="#">Software Project</a></li>
+                <li class="active1"><a href="#">Home</a></li>
+                <li data-toggle="dropdown"><a href="#">Programs</a></li>
+            </ul>
+        </div>    
+    </nav>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container">
+
 <?php
 include("connect.php");
 
@@ -45,7 +134,7 @@ define ( 'CSV_PATH', 'C:/wamp/www/SoftwareProjectV1/' );
 
 $csv_file = CSV_PATH . "clientdataComplete.csv"; // Name of your CSV file
 
-echo "lkjkl";
+//echo "lkjkl";
 
 
 
@@ -100,7 +189,7 @@ while ( ! feof ( $csvfile ) ) {
 	$result = mysqli_query ( $db, $query1 );
 	
 	if (mysqli_fetch_array($result) == true) {
-		echo "update";
+		//echo "update";
 		//mysqli_query($db,"UPDATE student SET Age=36 WHERE FirstName='Peter' AND LastName='Griffin'");
 		mysqli_query($db,"UPDATE student SET 
 				student_name = '" . $insert_csv ['student_first_name'] . "' '" . $insert_csv ['student_last_name'] . "',
@@ -112,7 +201,7 @@ while ( ! feof ( $csvfile ) ) {
 				where student_no = '" . $insert_csv ['student_no'] . "'");
 	}
 	else {
-		echo "insert";
+		//echo "insert";
 		$query2 = "INSERT INTO student(student_no,student_name,student_first_name,student_last_name,program_no,program_version,
 				department_no) 
 				VALUES('" . $insert_csv ['student_no'] . "',
@@ -176,13 +265,13 @@ function insertCourseTable() {
 		$result = mysqli_query ( $db, $query1 );
 
 		if (mysqli_fetch_array($result) == true) {
-			echo "update";
+			//echo "update";
 			mysqli_query($db,"UPDATE course SET
 				course_name = '" . $insert_csv ['course_name'] . "'
 						where course_no = '" . $insert_csv ['course_no'] . "'");
 		}
 		else {
-			echo "insert";
+			//echo "insert";
 			$query2 = "INSERT INTO course(course_no,course_name)
 				VALUES('" . $insert_csv ['course_no'] . "','" . $insert_csv ['course_name'] . "')";
 			$insert = mysqli_query ( $db, $query2 );
@@ -234,7 +323,7 @@ function insertCourseSectionTable() {
 		$result = mysqli_query ( $db, $query1 );
 
 		if (mysqli_fetch_array($result) == true) {
-			echo "update";
+			//echo "update";
 			//mysqli_query($db,"UPDATE student SET Age=36 WHERE FirstName='Peter' AND LastName='Griffin'");
 		//	mysqli_query($db,"UPDATE student SET
 			//	student_last_name = '" . $insert_csv ['student_last_name'] . "',
@@ -242,7 +331,7 @@ function insertCourseSectionTable() {
 					//	where student_no = '" . $insert_csv ['student_no'] . "'");
 		}
 		else {
-			echo "insert";
+			//echo "insert";
 			$query2 = "INSERT INTO course_section(section_no,course_no, level)
 				VALUES('" . $insert_csv ['section_no'] . "','" . $insert_csv ['course_no'] . "',
 				'" . $insert_csv ['level'] . "')";
@@ -314,7 +403,7 @@ function insertStudentEnrollmentTable() {
 		$result = mysqli_query ( $db, $query1 );
 
 		if (mysqli_fetch_array($result) == true) {
-			echo "update";
+			//echo "update";
 				mysqli_query($db,"UPDATE student_enrollment SET
 				grade = '" . $insert_csv ['grade'] . "',
 				status = '" . $insert_csv ['status'] . "'
@@ -327,7 +416,7 @@ function insertStudentEnrollmentTable() {
 						
 		}
 		else {
-			echo "insert";
+			//echo "insert";
 			$query2 = "INSERT INTO student_enrollment(term,student_no, program_no,program_version,department_no,course_no,grade,status)
 				VALUES('" . $insert_csv ['term'] . "', '" . $insert_csv ['student_no'] . "','" . $insert_csv ['program_no'] . "',
 				'" . $insert_csv ['program_version'] . "', '" . $insert_csv ['department_no'] . "', 
@@ -441,7 +530,7 @@ function insertProgramTable() {
 		$result = mysqli_query ( $db, $query1 );
 
 		if (mysqli_fetch_array($result) == true) {
-			echo "update";
+			//echo "update";
 			mysqli_query($db,"UPDATE program SET
 				program_name = '" . $insert_csv ['program_name'] . "',
 				a_level = '" . $insert_csv ['a_level'] . "'
@@ -450,7 +539,7 @@ function insertProgramTable() {
 				and program_version = '" . $insert_csv ['program_version'] . "'");
 		}
 		else {
-			echo "insert";
+		//	echo "insert";
 			$query2 = "INSERT INTO program(program_no,program_version,department_no,program_name,a_level)
 				VALUES('" . $insert_csv ['program_no'] . "','" . $insert_csv ['program_version'] . "',
 				'" . $insert_csv ['department_no'] . "', '" . $insert_csv ['program_name'] . "',
@@ -519,7 +608,7 @@ function insertProgramCourseTable() {
 				//and program_version = '" . $insert_csv ['program_version'] . "'");
 		}
 		else {
-			echo "insert";
+			//echo "insert";
 			$query2 = "INSERT INTO program_course(program_no,program_version,department_no,course_no)
 				VALUES('" . $insert_csv ['program_no'] . "','" . $insert_csv ['program_version'] . "',
 				'" . $insert_csv ['department_no'] . "', '" . $insert_csv ['course_no'] . "')";
@@ -545,3 +634,8 @@ function insertProgramCourseTable() {
 mysqli_close ( $db );
 
 ?>
+</div>
+</div>
+
+</body>
+</html>
