@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 01, 2014 at 01:21 AM
+-- Generation Time: Nov 02, 2014 at 05:37 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.5.12
 
@@ -3946,8 +3946,8 @@ ALTER TABLE `program`
 -- Constraints for table `program_course`
 --
 ALTER TABLE `program_course`
-  ADD CONSTRAINT `fk_program_has_course_program1` FOREIGN KEY (`program_no`, `program_version`, `department_no`) REFERENCES `program` (`program_no`, `program_version`, `department_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_program_course_course1` FOREIGN KEY (`course_no`) REFERENCES `course` (`course_no`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_program_course_course1` FOREIGN KEY (`course_no`) REFERENCES `course` (`course_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_program_has_course_program1` FOREIGN KEY (`program_no`, `program_version`, `department_no`) REFERENCES `program` (`program_no`, `program_version`, `department_no`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `student`
@@ -3959,8 +3959,8 @@ ALTER TABLE `student`
 -- Constraints for table `student_enrollment`
 --
 ALTER TABLE `student_enrollment`
-  ADD CONSTRAINT `fk_student_has_course_student1` FOREIGN KEY (`student_no`, `program_no`, `program_version`, `department_no`) REFERENCES `student` (`student_no`, `program_no`, `program_version`, `department_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_student_has_course_course1` FOREIGN KEY (`course_no`) REFERENCES `course` (`course_no`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_student_has_course_course1` FOREIGN KEY (`course_no`) REFERENCES `course` (`course_no`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_student_has_course_student1` FOREIGN KEY (`student_no`, `program_no`, `program_version`, `department_no`) REFERENCES `student` (`student_no`, `program_no`, `program_version`, `department_no`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
